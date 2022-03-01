@@ -1,4 +1,4 @@
-export ZSH="${HOME}/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # ZSH customizations
 ZSH_THEME="robbyrussell"
@@ -6,12 +6,13 @@ COMPLETION_WAITING_DOTS="true"
 
 # Plugins
 plugins=(
-	git npm golang gpg-agent docker docker-compose brew node 
-	zsh-autosuggestions extract python
+	git npm golang gpg-agent docker docker-compose brew extract python rust node
 )
 
-fpath+=~/.zfunc
-source $ZSH/oh-my-zsh.sh
+FPATH="${FPATH}:~/.zfunc"
+
+# SSH
+SSH_ENV=$HOME/.ssh/environment
 
 # start the ssh-agent
 function start_agent {
@@ -24,7 +25,9 @@ function start_agent {
     /usr/bin/ssh-add
 }
 
-if [[ $(uname -s) == "Linux" ]]; then
+if [[ $(uname -s) == "Linux" ]]; then  
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
   if [ -f "${SSH_ENV}" ]; then
       . ${SSH_ENV} > /dev/null
       ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
@@ -35,6 +38,13 @@ if [[ $(uname -s) == "Linux" ]]; then
   fi
 fi
 
+# Homebrew
+if type brew &>/dev/null
+then
+  FPATH="${FPATH}:$(brew --prefix)/share/zsh/site-functions"
+fi
+
+source $ZSH/oh-my-zsh.sh
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -50,36 +60,10 @@ export PATH=$PATH:$HOME/.pub-cache/bin
 # Golang configuration
 export GOPATH=$(go env GOPATH)
 export GOBIN=$GOPATH/bin
-export PATH="$GOBIN:$PATH"
-
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-autoload -U add-zsh-hook
-load-nvmrc() {
-  local node_version="$(nvm version)"
-  local nvmrc_path="$(nvm_find_nvmrc)"
-
-  if [ -n "$nvmrc_path" ]; then
-    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
-
-    if [ "$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "$nvmrc_node_version" != "$node_version" ]; then
-      nvm use
-    fi
-  elif [ "$node_version" != "$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
+export PATH=$PATH:$GOBIN
 
 # LOCAL BINARIES
-export PATH="$PATH:$HOME/.local/bin"
+export PATH=$PATH:$HOME/.local/bin
 
 # Rust
 export PATH=$PATH:$HOME/.cargo/bin
@@ -101,20 +85,6 @@ alias src="source ~/.zshrc"
 # MinIO
 complete -o nospace -C /usr/local/bin/mc mc
 
-# Homebrew
-if type brew &>/dev/null
-then
-  brew_prefix=$(brew --prefix)
-  export HOMEBREW_PREFIX="${brew_prefix}";
-  export HOMEBREW_CELLAR="${brew_prefix}/Cellar";
-  export HOMEBREW_REPOSITORY="${brew_prefix}/Homebrew";
-  export PATH="${brew_prefix}/bin:${brew_prefix}/sbin${PATH+:$PATH}";
-  export MANPATH="${brew_prefix}/share/man${MANPATH+:$MANPATH}:";
-  export INFOPATH="${brew_prefix}/share/info:${INFOPATH:-}";
-  FPATH="${brew_prefix}/share/zsh/site-functions:${FPATH}"
-fi
-
 # enable bash completion
 autoload -Uz compinit && compinit
 autoload -Uz bashcompinit && bashcompinit
-
