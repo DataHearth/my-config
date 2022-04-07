@@ -6,10 +6,29 @@ COMPLETION_WAITING_DOTS="true"
 
 # Plugins
 plugins=(
-	git npm golang gpg-agent docker docker-compose brew extract python rust node
+	git npm golang docker docker-compose extract python node zsh-autosuggestions
 )
 
-FPATH="${FPATH}:~/.zfunc"
+# Completion modules
+zfunc=$HOME/.zfunc
+if [[ ! -d $zfunc ]]; then
+    mkdir -p $zfunc
+fi
+if type rustup 1> /dev/null; then
+  if [[ ! -f $zfunc/_cargo ]]; then
+    rustup completions zsh cargo > $zfunc/_cargo
+  fi
+  if [[ ! -f $zfunc/_rustup ]]; then
+    rustup completions zsh > $zfunc/_rustup
+  fi
+fi
+if [[ ! -f $zfunc/_pip ]] && type pip 1> /dev/null; then
+  pip completion --zsh > $zfunc/_pip
+fi
+if [[ ! -f $zfunc/_flutter ]] && type flutter 1> /dev/null; then
+  flutter zsh-completion --suppress-analytics > $zfunc/_flutter
+fi
+FPATH="${FPATH}:$zfunc"
 
 # SSH
 SSH_ENV=$HOME/.ssh/environment
@@ -19,7 +38,7 @@ function start_agent {
     echo "Initializing new SSH agent..."
     # spawn ssh-agent
     /usr/bin/ssh-agent | sed 's/^echo/#echo/' > ${SSH_ENV}
-    echo succeeded
+    echo "succeeded"
     chmod 600 ${SSH_ENV}
     . ${SSH_ENV} > /dev/null
     /usr/bin/ssh-add
@@ -47,11 +66,7 @@ fi
 source $ZSH/oh-my-zsh.sh
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='nvim'
-else
-  export EDITOR='nvim'
-fi
+export EDITOR='nvim'
 
 # Flutter configuration
 export PATH=$PATH:$HOME/flutter/bin
