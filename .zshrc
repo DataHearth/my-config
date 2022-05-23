@@ -4,6 +4,11 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 COMPLETION_WAITING_DOTS="true"
 
+# NVM zsh plugins (needs to be before loading the plugin)
+#NVM_AUTO_USE=true
+#NVM_COMPLETION=true
+#NVM_LAZY_LOAD=true
+
 # Plugins
 plugins=(
 	git npm golang docker docker-compose extract python node zsh-autosuggestions
@@ -28,7 +33,7 @@ fi
 if [[ ! -f $zfunc/_flutter ]] && type flutter 1> /dev/null; then
   flutter zsh-completion --suppress-analytics > $zfunc/_flutter
 fi
-FPATH="${FPATH}:$zfunc"
+FPATH="${FPATH}:$zfunc/_flutter:$zfunc/_pip:$zfunc/_cargo:$zfunc/_rustup"
 
 # SSH
 SSH_ENV=$HOME/.ssh/environment
@@ -100,6 +105,10 @@ alias src="source ~/.zshrc"
 # MinIO
 complete -o nospace -C /usr/local/bin/mc mc
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 # enable bash completion
-autoload -Uz compinit && compinit
-autoload -Uz bashcompinit && bashcompinit
+#autoload -Uz bashcompinit; bashcompinit
+autoload -Uz compinit; compinit
