@@ -28,7 +28,7 @@ fi
 if [[ ! -f $zfunc/_flutter ]] && type flutter 1> /dev/null; then
   flutter zsh-completion --suppress-analytics > $zfunc/_flutter
 fi
-FPATH="${FPATH}:$zfunc/_flutter:$zfunc/_pip:$zfunc/_cargo:$zfunc/_rustup"
+export FPATH="${FPATH}:$zfunc"
 
 # SSH
 SSH_ENV=$HOME/.ssh/environment
@@ -60,7 +60,7 @@ fi
 # Homebrew
 if type brew &>/dev/null
 then
-  FPATH="${FPATH}:$(brew --prefix)/share/zsh/site-functions"
+  export FPATH="${FPATH}:$(brew --prefix)/share/zsh/site-functions"
 fi
 
 source $ZSH/oh-my-zsh.sh
@@ -76,6 +76,7 @@ export PATH=$PATH:$HOME/.pub-cache/bin
 export GOPATH=$(go env GOPATH)
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOBIN
+export GOPROXY=direct
 
 # LOCAL BINARIES
 export PATH=$PATH:$HOME/.local/bin
@@ -97,6 +98,7 @@ alias dc="docker-compose"
 alias src="source ~/.zshrc"
 alias http="xh"
 alias https="xhs"
+alias vim="nvim"
 
 # MinIO
 complete -o nospace -C /usr/local/bin/mc mc
