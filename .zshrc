@@ -46,7 +46,8 @@ function start_agent {
 
 if [[ $(uname -s) == "Linux" ]]; then  
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
+  export PATH=$PATH:/usr/local/go/bin
+ 
   if [ -f "${SSH_ENV}" ]; then
       . ${SSH_ENV} > /dev/null
       ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
