@@ -106,8 +106,21 @@ complete -o nospace -C /usr/local/bin/mc mc
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# custom scripts
+if [[ -d "$HOME/.config/scripts" ]]; then
+    local scripts="$HOME/.config/scripts"
+    if [[ -d "$scripts/python" ]]; then
+        local python_scripts_path="$scripts/python"
+	if [[ -z $PYTHON_GO_UPDATER ]] || ! ps -p $PYTHON_GO_UPDATER > /dev/null; then
+	    sudo -E env "PATH=$PATH" $python_scripts_path/go-updater.py > /dev/null &!
+	    export PYTHON_GO_UPDATER=$!
+	fi
+
+    fi
+fi
 
 # enable bash completion
 autoload -Uz bashcompinit; bashcompinit
