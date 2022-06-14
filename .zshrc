@@ -9,10 +9,10 @@ plugins=(
 	git npm golang docker docker-compose extract python node zsh-autosuggestions
 )
 
-# Completion modules
+# Completion modules    
 zfunc=$HOME/.zfunc
 if [[ ! -d $zfunc ]]; then
-    mkdir -p $zfunc
+  mkdir -p $zfunc
 fi
 if type rustup 1> /dev/null; then
   if [[ ! -f $zfunc/_cargo ]]; then
@@ -22,13 +22,21 @@ if type rustup 1> /dev/null; then
     rustup completions zsh > $zfunc/_rustup
   fi
 fi
-if [[ ! -f $zfunc/_pip ]] && type pip 1> /dev/null; then
-  pip completion --zsh > $zfunc/_pip
+if type pip 1> /dev/null; then
+  if [[ ! -f $zfunc/_pip ]]; then    
+    pip completion --zsh > $zfunc/_pip
+  fi
+  
+  source $zfunc/_pip
 fi
-if [[ ! -f $zfunc/_flutter ]] && type flutter 1> /dev/null; then
-  flutter zsh-completion --suppress-analytics > $zfunc/_flutter
+if type flutter 1> /dev/null; then
+  if [[ ! -f $zfunc/_flutter ]]; then
+    flutter zsh-completion --suppress-analytics > $zfunc/_flutter
+  fi
+
+  source $zfunc/_flutter
 fi
-export FPATH="${FPATH}:$zfunc"
+fpath=($zfunc $fpath)
 
 # SSH
 SSH_ENV=$HOME/.ssh/environment
@@ -46,8 +54,17 @@ function start_agent {
 
 if [[ $(uname -s) == "Linux" ]]; then  
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  
   export PATH=$PATH:/usr/local/go/bin
- 
+
+  # add installed homebrew openssl library for rust
+  if [[ -d "/home/linuxbrew/.linuxbrew/Cellar/openssl@1.1/1.1.1o" ]]; then
+    export LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/Cellar/openssl@1.1/1.1.1o/lib:$LD_LIBRARY_PATH
+  fi
+
+  alias vpn-up="wg-quick up wg0"
+  alias vpn-down="wg-quick down wg0"
+
   if [ -f "${SSH_ENV}" ]; then
       . ${SSH_ENV} > /dev/null
       ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
@@ -108,19 +125,6 @@ complete -o nospace -C /usr/local/bin/mc mc
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-# custom scripts
-if [[ -d "$HOME/.config/scripts" ]]; then
-    local scripts="$HOME/.config/scripts"
-    if [[ -d "$scripts/python" ]]; then
-        local python_scripts_path="$scripts/python"
-	if [[ -z $PYTHON_GO_UPDATER ]] || ! ps -p $PYTHON_GO_UPDATER > /dev/null; then
-	    sudo -E env "PATH=$PATH" $python_scripts_path/go-updater.py > /dev/null &!
-	    export PYTHON_GO_UPDATER=$!
-	fi
-
-    fi
-fi
 
 # enable bash completion
 autoload -Uz bashcompinit; bashcompinit

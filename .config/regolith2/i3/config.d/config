@@ -1,0 +1,9 @@
+# USER CHANGES
+assign [class="Gnome-terminal"] $ws1
+assign [class="Code"] $ws2
+assign [class="firefox"] $ws3
+assign [class="Slack"] $ws4
+assign [class="Signal"] $ws5
+assign [class="discord"] $ws5
+assign [class="Microsoft Teams - Preview"] $ws5
+for_window [class="Spotify"] $ws6
