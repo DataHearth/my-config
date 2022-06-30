@@ -6,7 +6,7 @@ COMPLETION_WAITING_DOTS="true"
 
 # Plugins
 plugins=(
-	git npm golang docker docker-compose extract python node zsh-autosuggestions
+	git npm golang docker docker-compose python node zsh-autosuggestions yarn
 )
 
 # Completion modules    
