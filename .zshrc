@@ -24,17 +24,24 @@ if type rustup 1> /dev/null; then
 fi
 if type pip 1> /dev/null; then
   if [[ ! -f $zfunc/_pip ]]; then    
-    pip completion --zsh > $zfunc/_pip
+    pip completion --zsh > $zfunc/pip.zsh
   fi
   
-  source $zfunc/_pip
+  source $zfunc/pip.zsh
+fi
+if type pip3 1> /dev/null; then
+  if [[ ! -f $zfunc/_pip ]]; then    
+    pip3 completion --zsh > $zfunc/pip3.zsh
+  fi
+  
+  source $zfunc/pip3.zsh
 fi
 if type flutter 1> /dev/null; then
   if [[ ! -f $zfunc/_flutter ]]; then
-    flutter zsh-completion --suppress-analytics > $zfunc/_flutter
+    flutter zsh-completion --suppress-analytics > $zfunc/flutter.zsh
   fi
 
-  source $zfunc/_flutter
+  source $zfunc/flutter.zsh
 fi
 fpath=($zfunc $fpath)
 
