@@ -1,0 +1,18 @@
+[user]
+	email = antoine.l@antoine-langlois.net
+	name = DataHearth
+	signingkey = 43C0623D204EE13D
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+	forceSignAnnotated = false
+[init]
+	defaultBranch = main
+[alias]
+	logs = log --graph --oneline
