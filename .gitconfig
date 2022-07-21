@@ -16,3 +16,5 @@
 	defaultBranch = main
 [alias]
 	logs = log --graph --oneline
+[diff]
+	external = difft

@@ -1,3 +1,5 @@
-.gitconfig
 .zshrc
+.gitconfig
+.ssh/config
 .config/nvim
+.config/regolith2
